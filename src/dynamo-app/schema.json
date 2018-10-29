@@ -1,0 +1,12 @@
+{
+    "$schema": "http://json-schema.org/schema",
+    "id": "dynamo-app",
+    "type": "object",
+    "properties": {
+        "name": {
+            "type": "string",
+            "description": "App name"
+        }
+    },
+    "required": [ "name" ]
+}
