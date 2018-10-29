@@ -8,7 +8,7 @@ export default function(schema: any): Rule {
       directory: 'pages',
       routing: true
     }),
-    externalSchematic("@schematics/angular", "component", {
+    externalSchematic("dynamo-collection", "ion-page", {
       project: 'pages-' + schema.name,
       module: 'pages-' + schema.name + '.module.ts',
       name: schema.name,
