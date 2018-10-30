@@ -13,7 +13,7 @@ export function readJsonInTree<T = any>(host: Tree, path: string): T {
         throw new Error(`Cannot find ${path}`);
     }
 
-    return JSON.parse(stripJsonComments(host.read(path).toString('utf-8')));
+    return JSON.parse(stripJsonComments(host.read(path)!.toString('utf-8')));
 }
 
 // https://github.com/nrwl/nx/blob/master/packages/schematics/src/utils/testing-utils.ts#L24
