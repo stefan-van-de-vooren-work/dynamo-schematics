@@ -54,7 +54,11 @@
             "type": "string",
             "description": "path the route should be",
             "default": ""
-
+        },
+        "addRoute": {
+            "type": "boolean",
+            "description": "add route to the projects app-routing.module.ts",
+            "default": true
         }
     },
     "required": []
