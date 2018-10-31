@@ -19,11 +19,6 @@
             "schema": "./dynamo-page/schema.json",
             "description": "Create new senses 2 page"
         },
-        "ion-page": {
-            "factory": "./ion-page",
-            "schema": "./ion-page/schema.json",
-            "description": "Create new ion page"
-        },
         "directive": {
             "aliases": ["d"],
             "extends": "@schematics/angular:directive"

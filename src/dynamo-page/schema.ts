@@ -1,6 +1,6 @@
 export interface Schema {
   path?: string;
-  project?: string;
+  project: string;
   name: string;
   prefix?: string;
   styleext?: string;
