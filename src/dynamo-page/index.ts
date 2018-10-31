@@ -27,6 +27,8 @@ import { validateHtmlSelector, validateName } from '@schematics/angular/utility/
 
 import { Schema as PageOptions } from './schema';
 
+const pagesRoot = './libs/pages/';
+
 function findRoutingModuleFromOptions(host: Tree, options: ModuleOptions): Path | undefined {
     if (options.hasOwnProperty('skipImport') && options.skipImport) {
         return undefined;
@@ -173,8 +175,6 @@ export default function(options: PageOptions): Rule {
 
         options.styleext = "scss";
 
-        console.log('options.project', options.project)
-
         if (!options.project) {
             throw new SchematicsException('project option is required.');
         }
@@ -187,9 +187,7 @@ export default function(options: PageOptions): Rule {
 
         options.module = findRoutingModuleFromOptions(host, options);
 
-        console.log('options.module',options.module);
-
-        const parsedPath = parseName('libs/pages/', options.name);
+        const parsedPath = parseName(pagesRoot, options.name);
         options.name = parsedPath.name;
         options.path = parsedPath.path;
         options.selector = options.selector ? options.selector : buildSelector(options, project.prefix);
