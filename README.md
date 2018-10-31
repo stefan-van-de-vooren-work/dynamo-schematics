@@ -24,5 +24,14 @@ npm run build
 npm publish
 ```
 
-That's it!
- 
+### Developing
+To run a schematic locally use:
+```bash
+ schematics .:<name-schematic> --params
+``` 
+ for example: `schematics .:dynamo-page --name=new-app`
+
+If you want to test the schematics in another project, use npm link on that project
+```bash
+    npm link <path-to-scheamtics-project>
+```
