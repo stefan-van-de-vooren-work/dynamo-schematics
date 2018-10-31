@@ -35,3 +35,10 @@ If you want to test the schematics in another project, use npm link on that proj
 ```bash
     npm link <path-to-scheamtics-project>
 ```
+
+### Debugging
+for debugging a schematic use:
+```bash 
+ node --inspect-brk $(which schematics) .:<name-schematic> --params
+ ```
+ you could add `debugger;` to your script to break, or setup VS or WebStorm debug session and add breakpoints in your script 
