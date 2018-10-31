@@ -1,18 +1,12 @@
 {
     "$schema": "http://json-schema.org/schema",
-    "id": "SchematicsSenses        IonicAngularPage",
-    "title": "senses Page Options Schema",
+    "id": "SchematicsSenses IonicAngularPage",
+    "title": "Senses Page Options Schema",
     "type": "object",
     "properties": {
-        "path": {
-            "type": "string",
-            "format": "path",
-            "description": "The path to create the page",
-            "visible": false
-        },
         "project": {
             "type": "string",
-            "description": "The name of the project"
+            "description": "The name of the project",
         },
         "name": {
             "type": "string",
@@ -55,11 +49,6 @@
             "type": "string",
             "format": "html-selector",
             "description": "The selector to use for the page"
-        },
-        "module":  {
-            "type": "string",
-            "description": "Allows specification of the declaring module",
-            "alias": "m"
         },
         "routePath": {
             "type": "string",
