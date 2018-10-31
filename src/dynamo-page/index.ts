@@ -29,13 +29,14 @@ import { Schema as PageOptions } from './schema';
 
 const pagesRoot = './libs/pages/';
 
-function findRoutingModuleFromOptions(host: Tree, options: ModuleOptions): Path | undefined {
+function findRoutingModuleFromOptions(host: Tree, project: any, options: ModuleOptions): Path | undefined {
     if (options.hasOwnProperty('skipImport') && options.skipImport) {
         return undefined;
     }
 
     if (!options.module) {
-        const pathToCheck = (options.path || '')
+
+        const pathToCheck = `/${project.root}/src/app`
             + (options.flat ? '' : '/' + strings.dasherize(options.name));
         return normalize(findRoutingModule(host, pathToCheck));
     } else {
@@ -171,7 +172,6 @@ function buildSelector(options: PageOptions, projectPrefix: string) {
 
 export default function(options: PageOptions): Rule {
     return (host, context) => {
-        const workspace = getWorkspace(host);
 
         options.styleext = "scss";
 
@@ -179,13 +179,11 @@ export default function(options: PageOptions): Rule {
             throw new SchematicsException('project option is required.');
         }
 
+        const workspace = getWorkspace(host);
         const project = workspace.projects[options.project];
 
-        if (options.path === undefined) {
-            options.path = `/${project.root}/src/app`;
-        }
 
-        options.module = findRoutingModuleFromOptions(host, options);
+        options.module = findRoutingModuleFromOptions(host, project, options);
 
         const parsedPath = parseName(pagesRoot, options.name);
         options.name = parsedPath.name;
@@ -204,8 +202,6 @@ export default function(options: PageOptions): Rule {
             }),
             move(parsedPath.path),
         ]);
-
-        options.path = `/${project.root}/src/app`;
 
         return chain([
             branchAndMerge(chain([
