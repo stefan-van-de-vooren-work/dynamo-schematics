@@ -12,10 +12,7 @@
         },
         "project": {
             "type": "string",
-            "description": "The name of the project",
-            "$default": {
-                "$source": "projectName"
-            }
+            "description": "The name of the project"
         },
         "name": {
             "type": "string",
