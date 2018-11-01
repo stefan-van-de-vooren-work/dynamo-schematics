@@ -23,12 +23,19 @@
     "types": [
       "jasmine",
       "node"
-    ]
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "typescript": [
+        "node_modules/typescript"
+      ]
+    }
   },
   "include": [
     "src/**/*"
   ],
   "exclude": [
+    "node_modules",
     "src/*/files/**/*"
   ]
 }
