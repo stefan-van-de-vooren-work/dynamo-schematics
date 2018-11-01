@@ -7,15 +7,7 @@ import {
     Rule,
     SchematicsException,
     Tree,
-    apply,
-    branchAndMerge,
-    chain,
-    filter,
-    mergeWith,
-    move,
-    noop,
-    template,
-    url,
+    chain
 } from '@angular-devkit/schematics';
 
 import {findNodes} from '@schematics/angular/utility/ast-utils';
@@ -23,7 +15,6 @@ import {Change, InsertChange} from '@schematics/angular/utility/change';
 import {getWorkspace} from '@schematics/angular/utility/config';
 import {buildRelativePath} from '@schematics/angular/utility/find-module';
 import {parseName} from '@schematics/angular/utility/parse-name';
-import {validateHtmlSelector, validateName} from '@schematics/angular/utility/validation';
 
 import {Schema as PageOptions} from './schema';
 
@@ -141,22 +132,8 @@ function addRouteToRoutesArray(source: ts.SourceFile, ngModulePath: string, rout
     return [];
 }
 
-function buildSelector(options: PageOptions, projectPrefix: string) {
-    let selector = strings.dasherize(options.name);
-
-    if (options.prefix) {
-        selector = `${options.prefix}-${selector}`;
-    } else if (options.prefix === undefined && projectPrefix) {
-        selector = `${projectPrefix}-${selector}`;
-    }
-
-    return selector;
-}
-
 export default function (options: PageOptions): Rule {
     return (host, context) => {
-
-        options.styleext = "scss";
 
         if (!options.project) {
             throw new SchematicsException('project option is required.');
@@ -165,35 +142,16 @@ export default function (options: PageOptions): Rule {
         const workspace = getWorkspace(host);
         const project = workspace.projects[options.project];
 
-        if (options.addRoute) {
-            options.routingModule = findRoutingModuleFromOptions(host, project, options);
-        }
+        options.routingModule = findRoutingModuleFromOptions(host, project, options);
 
         options.path = pagesRoot + options.project + '/';
 
         const parsedPath = parseName(options.path, options.name);
         options.name = parsedPath.name;
         options.path = parsedPath.path;
-        options.selector = options.selector ? options.selector : buildSelector(options, project.prefix);
-
-        validateName(options.name);
-        validateHtmlSelector(options.selector);
-
-        const templateSource = apply(url('./files'), [
-            options.spec ? noop() : filter(p => !p.endsWith('.spec.ts')),
-            template({
-                ...strings,
-                'if-flat': (s: string) => options.flat ? '' : s,
-                ...options,
-            }),
-            move(parsedPath.path),
-        ]);
 
         return chain([
-            branchAndMerge(chain([
-                addRouteToNgModule(options),
-                mergeWith(templateSource),
-            ])),
+            addRouteToNgModule(options),
         ])(host, context);
     };
 }

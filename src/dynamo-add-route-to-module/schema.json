@@ -1,0 +1,65 @@
+{
+    "$schema": "http://json-schema.org/schema",
+    "id": "SchematicsSenses IonicAngularPage",
+    "title": "Senses Page Options Schema",
+    "type": "object",
+    "properties": {
+        "project": {
+            "type": "string",
+            "description": "The name of the project",
+        },
+        "name": {
+            "type": "string",
+            "description": "The name of the page",
+            "$default": {
+                "$source": "argv",
+                "index": 0
+            }
+        },
+        "prefix": {
+            "type": "string",
+            "description": "The prefix to apply to generated selectors",
+            "alias": "p",
+            "oneOf": [
+                {
+                    "maxLength": 0
+                },
+                {
+                    "minLength": 1,
+                    "format": "html-selector"
+                }
+            ]
+        },
+        "styleext": {
+            "type": "string",
+            "description": "The file extension of the style file for the page",
+            "default": "css"
+        },
+        "spec": {
+            "type": "boolean",
+            "description": "Specifies if a spec file is generated",
+            "default": true
+        },
+        "flat": {
+            "type": "boolean",
+            "description": "Flag to indicate if a dir is created",
+            "default": false
+        },
+        "selector": {
+            "type": "string",
+            "format": "html-selector",
+            "description": "The selector to use for the page"
+        },
+        "routePath": {
+            "type": "string",
+            "description": "path the route should be",
+            "default": ""
+        },
+        "addRoute": {
+            "type": "boolean",
+            "description": "add route to the projects app-routing.module.ts",
+            "default": true
+        }
+    },
+    "required": []
+}
