@@ -9,6 +9,7 @@ import {
     template,
     move,
     mergeWith,
+    MergeStrategy,
 } from '@angular-devkit/schematics';
 import { dasherize } from '@nrwl/schematics/src/utils/strings';
 import { strings } from '@angular-devkit/schematics/node_modules/@angular-devkit/core';
@@ -32,6 +33,6 @@ export default function(options: any): Rule {
             tags: `app:${options.name}`,
             routing: true,
         }),
-        mergeWith(templateSource),
+        mergeWith(templateSource, MergeStrategy.Overwrite),
     ]);
 }
