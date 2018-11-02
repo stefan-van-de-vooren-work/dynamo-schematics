@@ -6,6 +6,10 @@
         "name": {
             "type": "string",
             "description": "App name"
+        },
+        "path": {
+            "type": "string",
+            "description": "path"
         }
     }
 }

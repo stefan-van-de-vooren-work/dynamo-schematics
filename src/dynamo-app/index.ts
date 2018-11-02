@@ -1,12 +1,46 @@
-import { chain, externalSchematic, Rule } from '@angular-devkit/schematics';
+import {
+    chain,
+    externalSchematic,
+    Rule,
+    apply,
+    noop,
+    filter,
+    url,
+    template,
+    move,
+    mergeWith,
+} from '@angular-devkit/schematics';
 import { addIonicToPackageJson } from '../utils/package-json';
+import { strings } from '@angular-devkit/schematics/node_modules/@angular-devkit/core';
+import { parseName } from '@schematics/angular/utility/parse-name';
+import { getWorkspace } from '@schematics/angular/utility/config';
 
-export default function(schema: any): Rule {
-    return chain([
-        externalSchematic('@nrwl/schematics', 'app', {
-            name: schema.name,
-            routing: true
-        }),
-        addIonicToPackageJson()
-    ]);
+export default function(options: any): Rule {
+    return (host, context) => {
+        console.log(options);
+        const appsRoot = `./apps/${options.name}/src/app`;
+
+        const workspace = getWorkspace(host);
+
+        // const project = workspace.projects[options.project];
+        // const parsedPath = parseName(options.path, options.name);
+
+        const templateSource = apply(url('./files'), [
+            options.spec ? noop() : filter(p => !p.endsWith('.spec.ts')),
+            template({
+                ...strings,
+                'if-flat': (s: string) => (options.flat ? '' : s),
+                ...options,
+            }),
+            move(appsRoot),
+        ]);
+        return chain([
+            externalSchematic('@nrwl/schematics', 'app', {
+                name: options.name,
+                tags: `app:${options.name}`,
+                routing: true,
+            }),
+            mergeWith(templateSource),
+        ]);
+    };
 }
