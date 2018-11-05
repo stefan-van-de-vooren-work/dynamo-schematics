@@ -4,9 +4,10 @@
     "title": "Senses Page Options Schema",
     "type": "object",
     "properties": {
-        "project": {
+        "applications": {
             "type": "string",
-            "description": "The name of the project",
+            "description": "Comma separated list of applications where routing to the page should be added to",
+            "alias": "apps"
         },
         "name": {
             "type": "string",
@@ -18,7 +19,7 @@
         },
         "prefix": {
             "type": "string",
-            "description": "The prefix to apply to generated selectors",
+            "description": "The prefix to apply to generated selectors when more then one application is defined",
             "alias": "p",
             "oneOf": [
                 {
@@ -28,12 +29,18 @@
                     "minLength": 1,
                     "format": "html-selector"
                 }
-            ]
+            ],
+            "default": "senses"
+        },
+        "path": {
+            "type": "string",
+            "description": "root folder of the pages",
+            "default": "./libs/pages/"
         },
         "styleext": {
             "type": "string",
             "description": "The file extension of the style file for the page",
-            "default": "css"
+            "default": "scss"
         },
         "spec": {
             "type": "boolean",
@@ -54,11 +61,6 @@
             "type": "string",
             "description": "path the route should be",
             "default": ""
-        },
-        "addRoute": {
-            "type": "boolean",
-            "description": "add route to the projects app-routing.module.ts",
-            "default": true
         }
     },
     "required": []

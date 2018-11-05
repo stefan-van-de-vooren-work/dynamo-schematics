@@ -11,9 +11,9 @@
       "schema": "./dynamo-app/schema.json",
       "description": "Create new Senses 2 app"
     },
-    "dynamo-page": {
-      "factory": "./dynamo-page",
-      "schema": "./dynamo-page/schema.json",
+    "page": {
+      "factory": "./page",
+      "schema": "./page/schema.json",
       "description": "Create new Senses 2 page"
     },
     "dynamo-feature": {

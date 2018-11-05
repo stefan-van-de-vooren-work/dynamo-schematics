@@ -27,12 +27,7 @@ import {validateHtmlSelector, validateName} from '@schematics/angular/utility/va
 
 import {Schema as PageOptions} from './schema';
 
-const pagesRoot = './libs/pages/';
-
 function findRoutingModuleFromOptions(host: Tree, project: any, options: PageOptions): Path | undefined {
-    if (options.hasOwnProperty('addRoute') && !options.addRoute) {
-        return undefined;
-    }
     const pathToCheck = `/${project.root}/src/app`
         + (options.flat ? '' : '/' + strings.dasherize(options.name));
     return normalize(findRoutingModule(host, pathToCheck, options.name));
@@ -156,25 +151,30 @@ function buildSelector(options: PageOptions, projectPrefix: string) {
 export default function (options: PageOptions): Rule {
     return (host, context) => {
 
-        options.styleext = "scss";
-
-        if (!options.project) {
-            throw new SchematicsException('project option is required.');
+        if (!options.applications) {
+            throw new SchematicsException('application option is required.');
         }
 
+        const apps: string[] = options.applications.split(',');
         const workspace = getWorkspace(host);
-        const project = workspace.projects[options.project];
+        let appPrefix: string = '';
 
-        if (options.addRoute) {
+        const rules = apps.map(app => {
+
+            const project = workspace.projects[app];
+            appPrefix = project.prefix;
             options.routingModule = findRoutingModuleFromOptions(host, project, options);
-        }
 
-        options.path = pagesRoot + options.project + '/';
+            return addRouteToNgModule(options);
 
-        const parsedPath = parseName(options.path, options.name);
+        });
+
+        options.prefix = apps.length>1 ? options.prefix : appPrefix;
+        options.selector = options.selector ? options.selector : buildSelector(options, '');
+
+        const parsedPath = parseName(options.path || '', options.name);
         options.name = parsedPath.name;
         options.path = parsedPath.path;
-        options.selector = options.selector ? options.selector : buildSelector(options, project.prefix);
 
         validateName(options.name);
         validateHtmlSelector(options.selector);
@@ -189,11 +189,10 @@ export default function (options: PageOptions): Rule {
             move(parsedPath.path),
         ]);
 
+        rules.push(mergeWith(templateSource));
+
         return chain([
-            branchAndMerge(chain([
-                addRouteToNgModule(options),
-                mergeWith(templateSource),
-            ])),
+            branchAndMerge(chain(rules)),
         ])(host, context);
     };
 }

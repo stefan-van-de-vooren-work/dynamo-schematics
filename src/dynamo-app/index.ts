@@ -12,7 +12,7 @@ import {
     MergeStrategy,
 } from '@angular-devkit/schematics';
 import { dasherize } from '@nrwl/schematics/src/utils/strings';
-import { strings } from '@angular-devkit/schematics/node_modules/@angular-devkit/core';
+import { strings } from '@angular-devkit/core';
 
 export default function(options: any): Rule {
     console.log(options);

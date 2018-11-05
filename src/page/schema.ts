@@ -1,6 +1,6 @@
 export interface Schema {
     path?: string;
-    project: string;
+    applications: string;
     name: string;
     prefix?: string;
     styleext?: string;
@@ -9,5 +9,4 @@ export interface Schema {
     selector?: string;
     routingModule?: string;
     routePath?: string;
-    addRoute?: string;
 }

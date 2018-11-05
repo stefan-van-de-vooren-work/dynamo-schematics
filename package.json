@@ -17,6 +17,7 @@
         "@angular-devkit/core": "^7.0.2",
         "@angular-devkit/schematics": "^7.0.2",
         "@angular-devkit/schematics-cli": "^0.10.3",
+        "@ionic/schematics-angular": "^1.0.7",
         "@nrwl/schematics": "^6.4.0",
         "@schematics/angular": "^7.0.3",
         "@types/jasmine": "^2.6.0",
