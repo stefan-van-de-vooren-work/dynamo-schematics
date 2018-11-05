@@ -145,7 +145,7 @@ export default function (options: PageOptions): Rule {
     return (host, context) => {
 
         if (!options.apps && !options.page) {
-            throw new SchematicsException('application or page option is required.');
+            throw new SchematicsException('apps or page option is required.');
         }
 
         let rules: Rule[] = [];
@@ -160,7 +160,7 @@ export default function (options: PageOptions): Rule {
                 const project = workspace.projects[app];
                 appPrefix = project.prefix;
 
-                const pathToCheck = `/${project.root}/src/app/` + strings.dasherize(options.name);
+                const pathToCheck = `/${project.root}src/app/` + strings.dasherize(app);
 
                 options.module = findModule(host, pathToCheck, false);
 
