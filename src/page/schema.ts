@@ -1,12 +1,13 @@
 export interface Schema {
     path?: string;
-    applications: string;
+    applications?: string;
+    page?: string;
     name: string;
     prefix?: string;
     styleext?: string;
     spec?: boolean;
     flat?: boolean;
     selector?: string;
-    routingModule?: string;
+    module?: string;
     routePath?: string;
 }

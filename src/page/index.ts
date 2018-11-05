@@ -27,51 +27,75 @@ import {validateHtmlSelector, validateName} from '@schematics/angular/utility/va
 
 import {Schema as PageOptions} from './schema';
 
-function findRoutingModuleFromOptions(host: Tree, project: any, options: PageOptions): Path | undefined {
+function findModuleFromOptions(host: Tree, project: any, options: PageOptions): Path | undefined {
     const pathToCheck = `/${project.root}/src/app`
         + (options.flat ? '' : '/' + strings.dasherize(options.name));
-    return normalize(findRoutingModule(host, pathToCheck, options.name));
+    return normalize(findModule(host, pathToCheck));
 }
 
-function findRoutingModule(host: Tree, generateDir: string, projectName: string): Path {
+function findPageFromOptions(host: Tree, page: string, options: PageOptions): Path | undefined {
+    const pathToCheck = options.path + page;
+    return normalize(findPage(host, pathToCheck));
+}
+
+function findModule(host: Tree, generateDir: string): Path {
     let dir: DirEntry | null = host.getDir('/' + generateDir);
 
-    const routingModuleRe = /-routing\.module\.ts/;
+    const moduleRe = /-routing\.module\.ts/;
 
     while (dir) {
-        const matches = dir.subfiles.filter(p => routingModuleRe.test(p));
+        const matches = dir.subfiles.filter(p => moduleRe.test(p));
 
         if (matches.length === 1) {
             return join(dir.path, matches[0]);
         } else if (matches.length > 1) {
-            throw new Error('More than one app-routing.module matches. Use --addRoute=false option to skip adding '
-                + 'the route to the closest app-routing.module.');
+            throw new Error(generateDir + ' contains more then one module');
         }
 
         dir = dir.parent;
     }
 
-    throw new Error(`Project ${projectName} does not contain a app-routing.module.ts`);
+    throw new Error(generateDir + ' does not contain a app-routing.module.ts');
+}
+
+function findPage(host: Tree, generateDir: string): Path {
+    let dir: DirEntry | null = host.getDir('/' + generateDir);
+
+    const moduleRe = /\.module\.ts/;
+
+    while (dir) {
+        const matches = dir.subfiles.filter(p => moduleRe.test(p));
+
+        if (matches.length === 1) {
+            return join(dir.path, matches[0]);
+        } else if (matches.length > 1) {
+            throw new Error(generateDir + ' contains more then one module');
+        }
+
+        dir = dir.parent;
+    }
+
+    throw new Error(generateDir + ` does not exist or does not contain a module`);
 }
 
 function addRouteToNgModule(options: PageOptions): Rule {
-    const {routingModule} = options;
+    const {module} = options;
 
-    if (!routingModule) {
+    if (!module) {
         return host => {
             return host
         };
     }
 
     return host => {
-        const text = host.read(routingModule);
+        const text = host.read(module);
 
         if (!text) {
             return host;
         }
 
         const sourceText = text.toString('utf8');
-        const source = ts.createSourceFile(routingModule, sourceText, ts.ScriptTarget.Latest, true);
+        const source = ts.createSourceFile(module, sourceText, ts.ScriptTarget.Latest, true);
 
         const pagePath = (
             `/${options.path}/` +
@@ -79,12 +103,12 @@ function addRouteToNgModule(options: PageOptions): Rule {
             `${strings.dasherize(options.name)}.module`
         );
 
-        const relativePath = buildRelativePath(routingModule, pagePath);
+        const relativePath = buildRelativePath(module, pagePath);
 
         const routePath = options.routePath ? options.routePath : options.name;
         const routeLoadChildren = `${relativePath}#${strings.classify(options.name)}PageModule`;
-        const changes = addRouteToRoutesArray(source, routingModule, routePath, routeLoadChildren);
-        const recorder = host.beginUpdate(routingModule);
+        const changes = addRouteToRoutesArray(source, module, routePath, routeLoadChildren);
+        const recorder = host.beginUpdate(module);
 
         for (const change of changes) {
             if (change instanceof InsertChange) {
@@ -151,25 +175,38 @@ function buildSelector(options: PageOptions, projectPrefix: string) {
 export default function (options: PageOptions): Rule {
     return (host, context) => {
 
-        if (!options.applications) {
-            throw new SchematicsException('application option is required.');
+        if (!options.applications && !options.page) {
+            throw new SchematicsException('application or page option is required.');
         }
 
-        const apps: string[] = options.applications.split(',');
-        const workspace = getWorkspace(host);
-        let appPrefix: string = '';
+        let rules: Rule[] = [];
 
-        const rules = apps.map(app => {
+        if(options.applications){
+            const apps: string[] = options.applications.split(',');
+            const workspace = getWorkspace(host);
+            let appPrefix: string = '';
 
-            const project = workspace.projects[app];
-            appPrefix = project.prefix;
-            options.routingModule = findRoutingModuleFromOptions(host, project, options);
+            rules = apps.map(app => {
 
-            return addRouteToNgModule(options);
+                const project = workspace.projects[app];
+                appPrefix = project.prefix;
+                options.module = findModuleFromOptions(host, project, options);
 
-        });
+                return addRouteToNgModule(options);
 
-        options.prefix = apps.length>1 ? options.prefix : appPrefix;
+            });
+
+            options.prefix = apps.length>1 ? options.prefix : appPrefix;
+        }else if(options.page){
+            options.module = findPageFromOptions(host, options.page, options);
+            options.path = (options.path || '') + options.page + '/';
+            console.log('path', options.path)
+            rules.push(addRouteToNgModule(options));
+        }
+
+
+
+
         options.selector = options.selector ? options.selector : buildSelector(options, '');
 
         const parsedPath = parseName(options.path || '', options.name);

@@ -6,8 +6,12 @@
     "properties": {
         "applications": {
             "type": "string",
-            "description": "Comma separated list of applications where routing to the page should be added to",
+            "description": "Comma separated list of applications where routing to the new page should be added to",
             "alias": "apps"
+        },
+        "page": {
+            "type": "string",
+            "description": "Name of parent page where routing to the new page should be added to"
         },
         "name": {
             "type": "string",
@@ -20,7 +24,6 @@
         "prefix": {
             "type": "string",
             "description": "The prefix to apply to generated selectors when more then one application is defined",
-            "alias": "p",
             "oneOf": [
                 {
                     "maxLength": 0
