@@ -1,6 +1,6 @@
 export interface Schema {
     path?: string;
-    applications?: string;
+    apps?: string;
     page?: string;
     name: string;
     prefix?: string;

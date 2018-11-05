@@ -14,7 +14,8 @@
     "page": {
       "factory": "./page",
       "schema": "./page/schema.json",
-      "description": "Create new Senses 2 page"
+      "description": "Create new Senses 2 page",
+      "aliases": ["p"]
     },
     "dynamo-feature": {
       "description": "Create a new Senses 2 feature",

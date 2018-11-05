@@ -27,27 +27,16 @@ import {validateHtmlSelector, validateName} from '@schematics/angular/utility/va
 
 import {Schema as PageOptions} from './schema';
 
-function findModuleFromOptions(host: Tree, project: any, options: PageOptions): Path | undefined {
-    const pathToCheck = `/${project.root}/src/app`
-        + (options.flat ? '' : '/' + strings.dasherize(options.name));
-    return normalize(findModule(host, pathToCheck));
-}
-
-function findPageFromOptions(host: Tree, page: string, options: PageOptions): Path | undefined {
-    const pathToCheck = options.path + page;
-    return normalize(findPage(host, pathToCheck));
-}
-
-function findModule(host: Tree, generateDir: string): Path {
+function findModule(host: Tree, generateDir: string, pageModule: boolean): Path {
     let dir: DirEntry | null = host.getDir('/' + generateDir);
 
-    const moduleRe = /-routing\.module\.ts/;
+    const moduleRe = pageModule ? /\.module\.ts/ : /-routing\.module\.ts/;
 
     while (dir) {
         const matches = dir.subfiles.filter(p => moduleRe.test(p));
 
         if (matches.length === 1) {
-            return join(dir.path, matches[0]);
+            return normalize(join(dir.path, matches[0]));
         } else if (matches.length > 1) {
             throw new Error(generateDir + ' contains more then one module');
         }
@@ -55,27 +44,7 @@ function findModule(host: Tree, generateDir: string): Path {
         dir = dir.parent;
     }
 
-    throw new Error(generateDir + ' does not contain a app-routing.module.ts');
-}
-
-function findPage(host: Tree, generateDir: string): Path {
-    let dir: DirEntry | null = host.getDir('/' + generateDir);
-
-    const moduleRe = /\.module\.ts/;
-
-    while (dir) {
-        const matches = dir.subfiles.filter(p => moduleRe.test(p));
-
-        if (matches.length === 1) {
-            return join(dir.path, matches[0]);
-        } else if (matches.length > 1) {
-            throw new Error(generateDir + ' contains more then one module');
-        }
-
-        dir = dir.parent;
-    }
-
-    throw new Error(generateDir + ` does not exist or does not contain a module`);
+    throw new Error(generateDir + (pageModule ? ' does not exist or does not contain a module' : ' does not contain a app-routing.module.ts'));
 }
 
 function addRouteToNgModule(options: PageOptions): Rule {
@@ -175,14 +144,14 @@ function buildSelector(options: PageOptions, projectPrefix: string) {
 export default function (options: PageOptions): Rule {
     return (host, context) => {
 
-        if (!options.applications && !options.page) {
+        if (!options.apps && !options.page) {
             throw new SchematicsException('application or page option is required.');
         }
 
         let rules: Rule[] = [];
 
-        if(options.applications){
-            const apps: string[] = options.applications.split(',');
+        if(options.apps){
+            const apps: string[] = options.apps.split(',');
             const workspace = getWorkspace(host);
             let appPrefix: string = '';
 
@@ -190,22 +159,25 @@ export default function (options: PageOptions): Rule {
 
                 const project = workspace.projects[app];
                 appPrefix = project.prefix;
-                options.module = findModuleFromOptions(host, project, options);
+
+                const pathToCheck = `/${project.root}/src/app/` + strings.dasherize(options.name);
+
+                options.module = findModule(host, pathToCheck, false);
 
                 return addRouteToNgModule(options);
 
             });
 
             options.prefix = apps.length>1 ? options.prefix : appPrefix;
+
         }else if(options.page){
-            options.module = findPageFromOptions(host, options.page, options);
+
+            const pathToCheck = options.path + options.page;
+
+            options.module = findModule(host, pathToCheck, true);
             options.path = (options.path || '') + options.page + '/';
-            console.log('path', options.path)
             rules.push(addRouteToNgModule(options));
         }
-
-
-
 
         options.selector = options.selector ? options.selector : buildSelector(options, '');
 

@@ -4,10 +4,9 @@
     "title": "Senses Page Options Schema",
     "type": "object",
     "properties": {
-        "applications": {
+        "apps": {
             "type": "string",
-            "description": "Comma separated list of applications where routing to the new page should be added to",
-            "alias": "apps"
+            "description": "Comma separated list of applications where routing to the new page should be added to"
         },
         "page": {
             "type": "string",
