@@ -15,7 +15,6 @@ import { dasherize } from '@nrwl/schematics/src/utils/strings';
 import { strings } from '@angular-devkit/core';
 
 export default function(options: any): Rule {
-    console.log(options);
     const appsRoot = `./apps/${dasherize(options.name)}/src/app`;
 
     const templateSource = apply(url('./files'), [

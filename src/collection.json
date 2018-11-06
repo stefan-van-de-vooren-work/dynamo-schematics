@@ -1,26 +1,26 @@
 {
-  "$schema": "../node_modules/@angular-devkit/schematics/collection-schema.json",
-  "name": "dynamo-collection",
-  "version": "0.0.1",
-  "extends": [
-    "@nrwl/schematics"
-  ],
-  "schematics": {
-    "dynamo-app": {
-      "factory": "./dynamo-app",
-      "schema": "./dynamo-app/schema.json",
-      "description": "Create new Senses 2 app"
-    },
-    "page": {
-      "factory": "./page",
-      "schema": "./page/schema.json",
-      "description": "Create new Senses 2 page",
-      "aliases": ["p"]
-    },
-    "dynamo-feature": {
-      "description": "Create a new Senses 2 feature",
-      "factory": "./dynamo-feature/index#dynamoFeature",
-      "schema": "./dynamo-page/schema.json"
+    "$schema": "../node_modules/@angular-devkit/schematics/collection-schema.json",
+    "name": "dynamo-collection",
+    "version": "0.0.1",
+    "extends": [
+        "@nrwl/schematics"
+    ],
+    "schematics": {
+        "app": {
+            "factory": "./app",
+            "schema": "./app/schema.json",
+            "description": "Create new Senses 2 app"
+        },
+        "page": {
+            "factory": "./page",
+            "schema": "./page/schema.json",
+            "description": "Create new Senses 2 page",
+            "aliases": ["p"]
+        },
+        "feature": {
+            "description": "Create a new Senses 2 feature",
+            "factory": "./feature/index#dynamoFeature",
+            "schema": "./feature/schema.json"
+        }
     }
-  }
 }
