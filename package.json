@@ -4,7 +4,7 @@
     "description": "A blank schematics",
     "scripts": {
         "build": "npm run clean && tsc -p tsconfig.json",
-        "clean": "rimraf '*/index.{js,js.map,d.ts}'",
+        "clean": "rimraf 'src/**/*/index.{spec.js,spec.d.ts,spec.js.map,js,js.map,d.ts}'",
         "test": "jest -c jest.config.js "
     },
     "keywords": [
