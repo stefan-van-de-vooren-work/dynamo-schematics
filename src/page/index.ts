@@ -24,6 +24,7 @@ import {getWorkspace} from '@schematics/angular/utility/config';
 import {buildRelativePath} from '@schematics/angular/utility/find-module';
 import {parseName} from '@schematics/angular/utility/parse-name';
 import {validateHtmlSelector, validateName} from '@schematics/angular/utility/validation';
+import { readJsonInTree} from "../utils/json";
 
 import {Schema as PageOptions} from './schema';
 
@@ -153,7 +154,7 @@ export default function (options: PageOptions): Rule {
         if(options.apps){
             const apps: string[] = options.apps.split(',');
             const workspace = getWorkspace(host);
-            let appPrefix: string = '';
+            let appPrefix = '';
 
             rules = apps.map(app => {
 
@@ -173,6 +174,8 @@ export default function (options: PageOptions): Rule {
         }else if(options.page){
 
             const pathToCheck = options.path + options.page;
+            const parentPageConfig = readJsonInTree(host, pathToCheck + '/' + options.page + '.page.json');
+            options.prefix = parentPageConfig.prefix;
 
             options.module = findModule(host, pathToCheck, true);
             options.path = (options.path || '') + options.page + '/';
